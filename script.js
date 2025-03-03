@@ -17,7 +17,7 @@ async function loadHabits() {
         const habitData = docSnapshot.data();
         const li = document.createElement("li");
         li.textContent = `${habitData.name} (Streak: ${habitData.streak})`;
-        
+
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
         deleteBtn.addEventListener("click", async () => {
