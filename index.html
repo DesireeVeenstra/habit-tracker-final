@@ -3,40 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habit Tracker</title>
+    <title>Habit Tracker - Midterm</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Header -->
     <header>
         <h1>Habit Tracker</h1>
     </header>
-    
+
     <main>
+        <!-- ✅ Biometric Authentication -->
         <section id="auth-container">
-            <button id="login-btn">Login with Biometrics</button>
+            <h2>Login with Biometrics</h2>
+            <button id="register-btn">Register Biometrics</button>
+            <button id="login-btn">Login</button>
             <p id="auth-status"></p>
         </section>
-        
+
+        <!-- ✅ Habit Tracker Input -->
         <section id="habit-form">
+            <h2>Track Your Habits</h2>
             <input type="text" id="habit-input" placeholder="Enter a habit" aria-label="Enter a habit">
             <button id="add-habit">Add Habit</button>
         </section>
-        
+
+        <!-- ✅ Habit List -->
         <section>
+            <h2>Your Habits</h2>
             <ul id="habit-list" aria-live="polite"></ul>
         </section>
-        
+
+        <!-- ✅ QR Code Generator -->
         <section id="qr-container">
             <h2>Share Your Habit Tracker</h2>
             <div id="qr-code"></div>
         </section>
-        
-        <section>
-            <button id="open-chatbot">Chat with AI</button>
-            <div id="chatbot-container" aria-live="assertive"></div>
+
+        <!-- ✅ AI Chatbot -->
+        <section id="chatbot-container">
+            <h2>Chat with AI</h2>
+            <div id="chat-history"></div>
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button id="send-btn">Send</button>
         </section>
+
     </main>
-    
+
+    <!-- ✅ JavaScript Modules -->
     <script type="module" src="firebase.js"></script>
     <script type="module" src="script.js"></script>
     <script type="module" src="biometric.js"></script>
