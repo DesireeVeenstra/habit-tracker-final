@@ -1,9 +1,12 @@
 // Ensure browser supports WebAuthn
-if (!window.PublicKeyCredential) {
-    document.getElementById("auth-status").textContent = "Biometric authentication not supported.";
-}
+document.addEventListener("DOMContentLoaded", () => {
+    if (!window.PublicKeyCredential) {
+        document.getElementById("auth-status").textContent = "❌ Biometric authentication not supported.";
+        return;
+    }
+});
 
-// 📌 REGISTER USER (Creates Credential)
+// 📌 REGISTER USER (Creates WebAuthn Credential)
 document.getElementById("register-btn").addEventListener("click", async () => {
     try {
         const challenge = new Uint8Array(32); // Secure challenge
@@ -14,13 +17,13 @@ document.getElementById("register-btn").addEventListener("click", async () => {
                 challenge: challenge,
                 rp: { name: "Habit Tracker Midterm" },
                 user: {
-                    id: new TextEncoder().encode("user123"), // User ID must be a Uint8Array
+                    id: new Uint8Array(16),  // Randomly generated user ID
                     name: "user@example.com",
-                    displayName: "User"
+                    displayName: "Habit Tracker User"
                 },
                 pubKeyCredParams: [
-                    { type: "public-key", alg: -7 }, // ES256
-                    { type: "public-key", alg: -257 } // RS256
+                    { type: "public-key", alg: -7 },  // ES256 (Elliptic Curve)
+                    { type: "public-key", alg: -257 } // RS256 (RSA)
                 ],
                 authenticatorSelection: { userVerification: "preferred" },
                 timeout: 60000,
@@ -28,23 +31,28 @@ document.getElementById("register-btn").addEventListener("click", async () => {
             }
         });
 
-        // Store credential ID for login
-        localStorage.setItem("credentialId", btoa(String.fromCharCode(...new Uint8Array(credential.rawId))));
+        if (credential) {
+            // Convert credential ID to base64 for storage
+            const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+            localStorage.setItem("credentialId", credentialId);
 
-        document.getElementById("auth-status").textContent = "Registration successful!";
-        console.log("✅ Credential Registered:", credential);
+            document.getElementById("auth-status").textContent = "✅ Registration successful!";
+            console.log("✅ Credential Registered:", credential);
+        } else {
+            document.getElementById("auth-status").textContent = "❌ Registration failed.";
+        }
     } catch (error) {
         console.error("❌ Registration failed:", error);
-        document.getElementById("auth-status").textContent = "Registration failed.";
+        document.getElementById("auth-status").textContent = "❌ Registration failed. Please try again.";
     }
 });
 
-// 📌 LOGIN USER (Uses Stored Credential)
+// 📌 LOGIN USER (Authenticate with Stored WebAuthn Credential)
 document.getElementById("login-btn").addEventListener("click", async () => {
     try {
         const storedCredentialId = localStorage.getItem("credentialId");
         if (!storedCredentialId) {
-            document.getElementById("auth-status").textContent = "No registered credentials found.";
+            document.getElementById("auth-status").textContent = "⚠️ No registered credentials found. Please register first.";
             return;
         }
 
@@ -62,10 +70,14 @@ document.getElementById("login-btn").addEventListener("click", async () => {
             }
         });
 
-        document.getElementById("auth-status").textContent = "Authentication successful!";
-        console.log("✅ Authentication Successful:", credential);
+        if (credential) {
+            document.getElementById("auth-status").textContent = "✅ Authentication successful!";
+            console.log("✅ Authentication Successful:", credential);
+        } else {
+            document.getElementById("auth-status").textContent = "❌ Authentication failed.";
+        }
     } catch (error) {
         console.error("❌ Authentication failed:", error);
-        document.getElementById("auth-status").textContent = "Authentication failed.";
+        document.getElementById("auth-status").textContent = "❌ Authentication failed. Please try again.";
     }
 });
