@@ -1,12 +1,13 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { db } from "./firebase.js";
 
-// Import Google's Gemini AI API
+// Load Google's Gemini AI dynamically
 const { GoogleGenerativeAI } = await import("https://esm.sh/@google/generative-ai");
 
-let apiKey;
-let model;
+let apiKey = null;
+let model = null;
 
+// Ensure DOM is fully loaded before running scripts
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("✅ DOM fully loaded, initializing chatbot...");
 
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // Fetch API key from Firestore
+    // ✅ Fetch API key from Firestore
     async function getApiKey() {
         try {
             console.log("🔍 Checking Firestore for API key...");
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            // Initialize Google Gemini AI Model
+            // ✅ Initialize Google Gemini AI Model
             const genAI = new GoogleGenerativeAI(apiKey);
             model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
@@ -51,10 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Initialize API Key Retrieval
+    // ✅ Initialize API Key Retrieval
     await getApiKey();
 
-    // Function to send user message to Gemini AI
+    // ✅ Function to send user message to Gemini AI
     async function askChatBot(request) {
         if (!apiKey || !model) {
             appendMessage("Error: AI model not initialized. Please wait for API key.");
@@ -65,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             appendMessage("🤖 Thinking...");
 
-            // Correct API request format
+            // ✅ Correct API request format
             const response = await model.generateContent({
                 contents: [{ parts: [{ text: request }] }]
             });
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Append messages to chat history
+    // ✅ Append messages to chat history
     function appendMessage(message) {
         let history = document.createElement("div");
         history.textContent = message;
@@ -96,8 +97,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         chatHistory.scrollTop = chatHistory.scrollHeight;
     }
 
-    // **Fix: Ensure Event Listener is Attached**
+    // ✅ Ensure Send Button Event Listener is Attached
     sendBtn.addEventListener("click", async () => {
+        console.log("📩 Send button clicked!");
+
         let userMessage = chatInput.value.trim();
         if (!userMessage) {
             appendMessage("Please enter a message.");
