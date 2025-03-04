@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            // ✅ Initialize Google Gemini AI Model
+            // Initialize Google Gemini AI Model
             const { GoogleGenerativeAI } = await import("https://esm.sh/@google/generative-ai");
             const genAI = new GoogleGenerativeAI(apiKey);
             model = genAI.getGenerativeModel({ model: "gemini-pro" });

@@ -1,4 +1,4 @@
-/* ✅ General Styles */
+/* General Styles */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
@@ -7,9 +7,9 @@ body {
     padding: 0;
 }
 
-/* ✅ Header */
+/*  Header */
 header {
-    background: #007bff;
+    background: #c796d1;
     color: white;
     padding: 20px;
     font-size: 24px;
@@ -17,13 +17,13 @@ header {
     text-transform: uppercase;
 }
 
-/* ✅ Headings */
+/* Headings */
 h1, h2 {
     color: #333;
     margin-bottom: 15px;
 }
 
-/* ✅ Habit Form */
+/*  Habit Form */
 #habit-form {
     margin: 20px auto;
     padding: 20px;
@@ -47,7 +47,7 @@ input {
 
 button {
     cursor: pointer;
-    background-color: #28a745;
+    background-color: #ac4f9c;
     color: white;
     border: none;
     font-weight: bold;
@@ -55,10 +55,10 @@ button {
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #ac4f9c;
 }
 
-/* ✅ Habit List */
+/* Habit List */
 ul {
     list-style: none;
     padding: 0;
@@ -78,16 +78,16 @@ li {
 }
 
 li button {
-    background-color: #dc3545;
+    background-color: #771747;
     padding: 5px 10px;
     font-size: 14px;
 }
 
 li button:hover {
-    background-color: #c82333;
+    background-color: #ac4f9c;
 }
 
-/* ✅ QR Code Centering */
+/* QR Code Centering */
 #qr-container {
     text-align: center; /* Centers everything inside */
     margin: 30px auto;
@@ -111,7 +111,7 @@ li button:hover {
     border-radius: 10px;
 }
 
-/* ✅ Chatbot Container */
+/*  Chatbot Container */
 #chatbot-container {
     width: 320px;
     border: 1px solid #ccc;
@@ -143,7 +143,7 @@ li button:hover {
 
 #send-btn {
     padding: 8px 12px;
-    background-color: #007bff;
+    background-color: #ac4f9c;
     color: white;
     border: none;
     border-radius: 5px;
@@ -153,7 +153,7 @@ li button:hover {
 }
 
 #send-btn:hover {
-    background-color: #0056b3;
+    background-color: #771747;
 }
 
 .history {
@@ -163,7 +163,7 @@ li button:hover {
     margin-bottom: 5px;
 }
 
-/* ✅ Responsive Design */
+/* Responsive Design */
 @media (max-width: 600px) {
     body {
         padding: 10px;

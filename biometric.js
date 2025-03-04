@@ -1,4 +1,3 @@
-// Ensure browser supports WebAuthn
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PublicKeyCredential) {
         document.getElementById("auth-status").textContent = "❌ Biometric authentication not supported.";
@@ -6,10 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// 📌 REGISTER USER (Creates WebAuthn Credential)
+//  REGISTER USER 
 document.getElementById("register-btn").addEventListener("click", async () => {
     try {
-        const challenge = new Uint8Array(32); // Secure challenge
+        const challenge = new Uint8Array(32); 
         window.crypto.getRandomValues(challenge);
 
         const credential = await navigator.credentials.create({
@@ -17,13 +16,13 @@ document.getElementById("register-btn").addEventListener("click", async () => {
                 challenge: challenge,
                 rp: { name: "Habit Tracker Midterm" },
                 user: {
-                    id: new Uint8Array(16),  // Randomly generated user ID
+                    id: new Uint8Array(16),  
                     name: "user@example.com",
                     displayName: "Habit Tracker User"
                 },
                 pubKeyCredParams: [
-                    { type: "public-key", alg: -7 },  // ES256 (Elliptic Curve)
-                    { type: "public-key", alg: -257 } // RS256 (RSA)
+                    { type: "public-key", alg: -7 },  
+                    { type: "public-key", alg: -257 } 
                 ],
                 authenticatorSelection: { userVerification: "preferred" },
                 timeout: 60000,
@@ -32,7 +31,6 @@ document.getElementById("register-btn").addEventListener("click", async () => {
         });
 
         if (credential) {
-            // Convert credential ID to base64 for storage
             const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
             localStorage.setItem("credentialId", credentialId);
 
@@ -47,7 +45,7 @@ document.getElementById("register-btn").addEventListener("click", async () => {
     }
 });
 
-// 📌 LOGIN USER (Authenticate with Stored WebAuthn Credential)
+//  LOGIN USER 
 document.getElementById("login-btn").addEventListener("click", async () => {
     try {
         const storedCredentialId = localStorage.getItem("credentialId");
