@@ -89,13 +89,17 @@ li button:hover {
 
 /* ✅ QR Code Centering */
 #qr-container {
-    text-align: center;
+    text-align: center; /* Centers everything inside */
     margin: 30px auto;
     max-width: 400px;
     padding: 20px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content inside */
+    justify-content: center; /* Centers content inside */
 }
 
 #qr-code {
@@ -103,6 +107,8 @@ li button:hover {
     justify-content: center;
     align-items: center;
     padding: 15px;
+    background: #fff;
+    border-radius: 10px;
 }
 
 /* ✅ Chatbot Container */
