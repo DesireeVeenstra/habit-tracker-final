@@ -16,7 +16,7 @@ async function loadHabits() {
     querySnapshot.forEach((docSnapshot) => {
         const habitData = docSnapshot.data();
         const li = document.createElement("li");
-        li.textContent = `${habitData.name} (Streak: ${habitData.streak})`;
+        li.textContent = `${habitData.name}`;
 
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
