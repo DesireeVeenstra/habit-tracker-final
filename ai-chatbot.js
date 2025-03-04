@@ -1,11 +1,8 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { db } from "./firebase.js"; 
 
-// Load Google's Gemini AI dynamically using a CDN
-const { GoogleGenerativeAI } = await import("https://esm.sh/@google/generative-ai");
-
 let apiKey;
-let model;
+let modelUrl = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1";
 
 // Get references to UI elements
 const chatInput = document.getElementById("chat-input");
@@ -16,7 +13,7 @@ const sendBtn = document.getElementById("send-btn");
 async function getApiKey() {
     try {
         console.log("🔍 Checking Firestore for API key...");
-        let snapshot = await getDoc(doc(db, "apikey", "googlegenai"));
+        let snapshot = await getDoc(doc(db, "apikey", "huggingface"));
 
         if (!snapshot.exists()) {
             console.error("❌ Firestore Error: API Key document does not exist.");
@@ -30,13 +27,7 @@ async function getApiKey() {
         if (!apiKey) {
             console.error("❌ API Key is empty or null.");
             appendMessage("Error: API key is missing in Firestore.");
-            return;
         }
-
-        // Initialize Google Gemini AI Model
-        const genAI = new GoogleGenerativeAI(apiKey);
-        model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     } catch (error) {
         console.error("❌ Error fetching API key from Firestore:", error);
         appendMessage("Error: Unable to retrieve API key.");
@@ -46,9 +37,9 @@ async function getApiKey() {
 // Initialize API Key Retrieval
 getApiKey();
 
-// Function to send user message to Gemini AI
+// Function to send user message to Hugging Face AI API
 async function askChatBot(request) {
-    if (!apiKey || !model) {
+    if (!apiKey) {
         appendMessage("Error: AI model not initialized. Please wait for API key.");
         console.error("❌ API Key is not loaded before chatbot request.");
         return;
@@ -57,20 +48,45 @@ async function askChatBot(request) {
     try {
         appendMessage("🤖 Thinking...");
 
-        const response = await model.generateContent(request);
+        const response = await fetch(modelUrl, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                inputs: request,
+                options: { wait_for_model: true }
+            })
+        });
 
-        if (!response || !response.candidates || response.candidates.length === 0) {
+        if (!response.ok) {
+            let errorText = await response.text();
+            console.error(`❌ API error: ${response.status} - ${response.statusText}\n${errorText}`);
+            appendMessage(`Error: AI response failed (Status ${response.status})`);
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data || !data.generated_text) {
             console.error("❌ AI Model did not return valid text.");
             appendMessage("Error: No valid response from AI.");
             return;
         }
 
-        appendMessage(`🤖 AI: ${response.candidates[0].content}`);
+        appendMessage(`🤖 AI: ${data.generated_text}`);
     } catch (error) {
         console.error("❌ Chatbot error:", error);
-        appendMessage("Error: Unable to generate response.");
+
+        if (error.message.includes("Failed to fetch")) {
+            appendMessage("Error: Network issue or API blocked.");
+        } else {
+            appendMessage("Error: Unable to generate response.");
+        }
     }
 }
+
 
 // Append messages to chat history
 function appendMessage(message) {
@@ -84,7 +100,7 @@ function appendMessage(message) {
 
 // Event listener for chatbot interactions
 sendBtn.addEventListener("click", async () => {
-    let userMessage = chatInput.value.trim();
+    let userMessage = chatInput.value.trim().toLowerCase();
     if (!userMessage) {
         appendMessage("Please enter a message.");
         return;
