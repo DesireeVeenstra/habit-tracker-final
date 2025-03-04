@@ -1,13 +1,12 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { db } from "./firebase.js"; 
+import { db } from "./firebase.js";
 
-// Load Google's Gemini AI dynamically
+// Import Google's Gemini AI API
 const { GoogleGenerativeAI } = await import("https://esm.sh/@google/generative-ai");
 
 let apiKey;
 let model;
 
-// Ensure DOM is fully loaded before accessing elements
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("✅ DOM fully loaded, initializing chatbot...");
 
@@ -66,12 +65,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             appendMessage("🤖 Thinking...");
 
-            // Properly formatted request for Gemini API
+            // Correct API request format
             const response = await model.generateContent({
-                contents: [{ role: "user", parts: [{ text: request }] }]
+                contents: [{ parts: [{ text: request }] }]
             });
 
-            // Check if response contains valid text
+            // Validate response
             if (!response || !response.candidates || response.candidates.length === 0) {
                 console.error("❌ AI Model did not return valid text.");
                 appendMessage("Error: No valid response from AI.");
