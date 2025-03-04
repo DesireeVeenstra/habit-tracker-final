@@ -43,8 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // ✅ Initialize Google Gemini AI Model
             const { GoogleGenerativeAI } = await import("https://esm.sh/@google/generative-ai");
             const genAI = new GoogleGenerativeAI(apiKey);
-            model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+            model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
         } catch (error) {
             console.error("❌ Error fetching API key from Firestore:", error);
