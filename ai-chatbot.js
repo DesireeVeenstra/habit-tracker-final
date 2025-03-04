@@ -1,13 +1,13 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { db } from "./firebase.js";
+import { db } from "./firebase.js"; 
 
 // Load Google's Gemini AI dynamically
 const { GoogleGenerativeAI } = await import("https://esm.sh/@google/generative-ai");
 
-let apiKey = null;
-let model = null;
+let apiKey;
+let model;
 
-// Ensure DOM is fully loaded before running scripts
+// Ensure DOM is fully loaded before accessing elements
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("✅ DOM fully loaded, initializing chatbot...");
 
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // ✅ Fetch API key from Firestore
+    // Fetch API key from Firestore
     async function getApiKey() {
         try {
             console.log("🔍 Checking Firestore for API key...");
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            // ✅ Initialize Google Gemini AI Model
+            // Initialize Google Gemini AI Model
             const genAI = new GoogleGenerativeAI(apiKey);
             model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
@@ -52,10 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ✅ Initialize API Key Retrieval
+    // Initialize API Key Retrieval
     await getApiKey();
 
-    // ✅ Function to send user message to Gemini AI
+    // Function to send user message to Gemini AI
     async function askChatBot(request) {
         if (!apiKey || !model) {
             appendMessage("Error: AI model not initialized. Please wait for API key.");
@@ -66,12 +66,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             appendMessage("🤖 Thinking...");
 
-            // ✅ Correct API request format
+            // Properly formatted request for Gemini API
             const response = await model.generateContent({
-                contents: [{ parts: [{ text: request }] }]
+                contents: [{ role: "user", parts: [{ text: request }] }]
             });
 
-            // Validate response
+            // Check if response contains valid text
             if (!response || !response.candidates || response.candidates.length === 0) {
                 console.error("❌ AI Model did not return valid text.");
                 appendMessage("Error: No valid response from AI.");
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ✅ Append messages to chat history
+    // Append messages to chat history
     function appendMessage(message) {
         let history = document.createElement("div");
         history.textContent = message;
@@ -97,10 +97,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         chatHistory.scrollTop = chatHistory.scrollHeight;
     }
 
-    // ✅ Ensure Send Button Event Listener is Attached
+    // **Fix: Ensure Event Listener is Attached**
     sendBtn.addEventListener("click", async () => {
-        console.log("📩 Send button clicked!");
-
         let userMessage = chatInput.value.trim();
         if (!userMessage) {
             appendMessage("Please enter a message.");
