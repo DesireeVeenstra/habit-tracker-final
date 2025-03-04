@@ -3,7 +3,7 @@ import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from './fi
 document.getElementById("add-habit").addEventListener("click", async () => {
     const habitInput = document.getElementById("habit-input").value;
     if (habitInput.trim() !== "") {
-        await addDoc(collection(db, "habits"), { name: habitInput, streak: 0 });
+        await addDoc(collection(db, "habits"), { name: habitInput });
         document.getElementById("habit-input").value = "";
         loadHabits();
     }
