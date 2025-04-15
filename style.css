@@ -1,0 +1,186 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+/*  Header */
+header {
+    background: #af82b8;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Headings */
+h1, h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/*  Habit Form */
+#habit-form {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 400px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+input {
+    width: 75%;
+    border: 1px solid #ccc;
+}
+
+button {
+    cursor: pointer;
+    background-color: #ac4f9c;
+    color: white;
+    border: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #ac4f9c;
+}
+
+/* Habit List */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 400px;
+}
+
+li {
+    background: white;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+li button {
+    background-color: #771747;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+li button:hover {
+    background-color: #ac4f9c;
+}
+
+/* QR Code Centering */
+#qr-container {
+    text-align: center; /* Centers everything inside */
+    margin: 30px auto;
+    max-width: 400px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content inside */
+    justify-content: center; /* Centers content inside */
+}
+
+#qr-code {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background: #fff;
+    border-radius: 10px;
+}
+
+/*  Chatbot Container */
+#chatbot-container {
+    width: 320px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+#chat-history {
+    height: 250px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+#chat-input {
+    width: calc(100% - 70px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#send-btn {
+    padding: 8px 12px;
+    background-color: #ac4f9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#send-btn:hover {
+    background-color: #771747;
+}
+
+.history {
+    padding: 10px;
+    background-color: #e6e6e6;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    #chatbot-container {
+        width: 90%;
+        bottom: 10px;
+        right: 5%;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    #qr-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+}
