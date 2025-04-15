@@ -14,4 +14,4 @@ A simple app to track daily habits with Firebase, AI chatbot, and biometric logi
 3. Open `index.html`
 
 ## Live Site
-[https://your-username.github.io/habit-tracker](https://your-username.github.io/habit-tracker)
+[https://DesireeVeenstra.github.io/habit-tracker-final](https://Desiree Veenstra.github.io/habit-tracker-final)

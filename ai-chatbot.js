@@ -1,28 +1,24 @@
-async function askChatBot(request) {
-    if (!apiKey || !model) {
-        appendMessage("⚠️ Error: AI model not initialized. Please wait for API key.");
-        console.error("❌ AI Key is missing before chatbot request.");
-        return;
-    }
+import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-    try {
-        appendMessage("🤖 Thinking...");
+const apiKey = "AIzaSyDIfIKwkNJKb4Voo26lSNgUr2tOXpAjS5c";
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        const response = await model.generateContent({
-            contents: [{ parts: [{ text: request }] }]
-        });
-
-        if (!response || !response.candidates || response.candidates.length === 0) {
-            console.error("❌ AI Model did not return valid text.");
-            appendMessage("⚠️ Error: No valid response from AI.");
-            return;
-        }
-
-        const aiMessage = response.candidates[0].content?.parts?.[0]?.text || "⚠️ No response received.";
-        appendMessage(`🤖 AI: ${aiMessage}`);
-
-    } catch (error) {
-        console.error("❌ Chatbot error:", error);
-        appendMessage("⚠️ Error: Unable to generate response. Check API Key or Network.");
-    }
+function appendMessage(message) {
+    const chatHistory = document.getElementById("chat-history");
+    const msg = document.createElement("div");
+    msg.classList.add("history");
+    msg.textContent = message;
+    chatHistory.appendChild(msg);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
 }
+
+document.getElementById("send-btn").addEventListener("click", () => {
+    const input = document.getElementById("chat-input");
+    const message = input.value.trim();
+    if (message !== "") {
+        appendMessage(`🧑 You: ${message}`);
+        askChatBot(message);
+        input.value = "";
+    }
+});
