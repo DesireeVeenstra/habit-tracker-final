@@ -1,9 +1,11 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-// ✅ Your Gemini API key from Google AI Studio
+// ✅ Your Gemini or PaLM API Key (from Google AI Studio)
 const apiKey = "AIzaSyDIfIKwkNJKb4Voo26lSNgUr2tOXpAjS5c";
 const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+// ✅ Use a model that works in browser environment
+const model = genAI.getGenerativeModel({ model: "models/chat-bison-001" });
 
 function appendMessage(message, sender = "system") {
     const chatHistory = document.getElementById("chat-history");
@@ -14,7 +16,6 @@ function appendMessage(message, sender = "system") {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
 
-// ✅ Add event listener to send button
 document.getElementById("send-btn").addEventListener("click", () => {
     const input = document.getElementById("chat-input");
     const text = input.value.trim();
@@ -26,7 +27,6 @@ document.getElementById("send-btn").addEventListener("click", () => {
 });
 
 async function askChatBot(request) {
-    // Show "Thinking..." status
     const thinkingMsg = document.createElement("div");
     thinkingMsg.textContent = "🤖 Thinking...";
     thinkingMsg.className = "thinking";
@@ -41,9 +41,7 @@ async function askChatBot(request) {
 
         console.log("🟢 Gemini response:", result);
 
-        // Remove "Thinking..." message
         thinkingMsg.remove();
-
         const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "🤖 No response.";
         appendMessage(`🤖 AI: ${reply}`, "bot");
     } catch (err) {
