@@ -1,13 +1,14 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-// ✅ Your Gemini API Key (from Google AI Studio)
+console.log("✅ AI chatbot script loaded");
+
+// ✅ Your Google AI Studio API key
 const apiKey = "AIzaSyDIfIKwkNJKb4Voo26lSNgUr2tOXpAjS5c";
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// ✅ Use the working Gemini model name
-const model = genAI.getGenerativeModel({ model: "models/gemini-pro" });
+// ✅ Use the correct model for browser/API key usage
+const model = genAI.getGenerativeModel({ model: "models/text-bison-001" });
 
-// ✅ Add message to chat history
 function appendMessage(message, sender = "system") {
     const chatHistory = document.getElementById("chat-history");
     const msg = document.createElement("div");
@@ -17,7 +18,6 @@ function appendMessage(message, sender = "system") {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
 
-// ✅ Handle send button click
 document.getElementById("send-btn").addEventListener("click", () => {
     const input = document.getElementById("chat-input");
     const text = input.value.trim();
@@ -28,7 +28,6 @@ document.getElementById("send-btn").addEventListener("click", () => {
     askChatBot(text);
 });
 
-// ✅ AI chatbot interaction using generateContentStream()
 async function askChatBot(prompt) {
     const thinkingMsg = document.createElement("div");
     thinkingMsg.textContent = "🤖 Thinking...";
@@ -37,29 +36,18 @@ async function askChatBot(prompt) {
     document.getElementById("chat-history").scrollTop = document.getElementById("chat-history").scrollHeight;
 
     try {
-        console.log("🟡 Sending to Gemini:", prompt);
+        console.log("🟡 Sending to text-bison:", prompt);
 
-        const result = await model.generateContentStream(prompt);
+        const result = await model.generateContent({
+            contents: [{ parts: [{ text: prompt }] }],
+        });
+
+        console.log("🟢 API Response:", result);
+
         thinkingMsg.remove();
 
-        let replyText = "";
-
-        for await (const chunk of result.stream) {
-            const text = chunk.text();
-            if (text) {
-                replyText += text;
-                // Update the last bot message live
-                const botMsgs = document.querySelectorAll(".history.bot");
-                if (botMsgs.length > 0) {
-                    botMsgs[botMsgs.length - 1].textContent = `🤖 AI: ${replyText}`;
-                } else {
-                    appendMessage(`🤖 AI: ${replyText}`, "bot");
-                }
-            }
-        }
-
-        console.log("🟢 AI Final Reply:", replyText);
-
+        const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "🤖 No response.";
+        appendMessage(`🤖 AI: ${reply}`, "bot");
     } catch (err) {
         console.error("❌ AI Error:", err);
         thinkingMsg.remove();
