@@ -5,6 +5,7 @@ import {
   collection,
   addDoc,
   getDoc,
+  getDocs,
   deleteDoc,
   doc,
   updateDoc
@@ -33,6 +34,7 @@ export {
   collection,
   addDoc,
   getDoc,
+  getDocs,
   deleteDoc,
   doc,
   updateDoc
