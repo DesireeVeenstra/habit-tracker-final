@@ -1,12 +1,13 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-// ✅ Your Gemini or PaLM API Key (from Google AI Studio)
+// ✅ Your Gemini API Key (from Google AI Studio)
 const apiKey = "AIzaSyDIfIKwkNJKb4Voo26lSNgUr2tOXpAjS5c";
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// ✅ Use a model that works in browser environment
-const model = genAI.getGenerativeModel({ model: "models/chat-bison-001" });
+// ✅ Use the working Gemini model name
+const model = genAI.getGenerativeModel({ model: "models/gemini-pro" });
 
+// ✅ Add message to chat history
 function appendMessage(message, sender = "system") {
     const chatHistory = document.getElementById("chat-history");
     const msg = document.createElement("div");
@@ -16,6 +17,7 @@ function appendMessage(message, sender = "system") {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
 
+// ✅ Handle send button click
 document.getElementById("send-btn").addEventListener("click", () => {
     const input = document.getElementById("chat-input");
     const text = input.value.trim();
@@ -26,7 +28,8 @@ document.getElementById("send-btn").addEventListener("click", () => {
     askChatBot(text);
 });
 
-async function askChatBot(request) {
+// ✅ AI chatbot interaction using generateContentStream()
+async function askChatBot(prompt) {
     const thinkingMsg = document.createElement("div");
     thinkingMsg.textContent = "🤖 Thinking...";
     thinkingMsg.className = "thinking";
@@ -34,16 +37,29 @@ async function askChatBot(request) {
     document.getElementById("chat-history").scrollTop = document.getElementById("chat-history").scrollHeight;
 
     try {
-        console.log("🟡 Sending request to Gemini:", request);
-        const result = await model.generateContent({
-            contents: [{ parts: [{ text: request }] }],
-        });
+        console.log("🟡 Sending to Gemini:", prompt);
 
-        console.log("🟢 Gemini response:", result);
-
+        const result = await model.generateContentStream(prompt);
         thinkingMsg.remove();
-        const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "🤖 No response.";
-        appendMessage(`🤖 AI: ${reply}`, "bot");
+
+        let replyText = "";
+
+        for await (const chunk of result.stream) {
+            const text = chunk.text();
+            if (text) {
+                replyText += text;
+                // Update the last bot message live
+                const botMsgs = document.querySelectorAll(".history.bot");
+                if (botMsgs.length > 0) {
+                    botMsgs[botMsgs.length - 1].textContent = `🤖 AI: ${replyText}`;
+                } else {
+                    appendMessage(`🤖 AI: ${replyText}`, "bot");
+                }
+            }
+        }
+
+        console.log("🟢 AI Final Reply:", replyText);
+
     } catch (err) {
         console.error("❌ AI Error:", err);
         thinkingMsg.remove();
