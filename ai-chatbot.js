@@ -1,56 +1,32 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-import { db, doc, getDoc } from "./firebase.js";
+import { db, doc, getDoc } from "./firebase.js"; // ✅ make sure firebase.js exports getDoc
 
 let genAI, model;
 
-// Load API key from Firestore and initialize Gemini
+// 🔑 Load the API key from Firestore on page load
 async function getApiKey() {
   try {
     const snapshot = await getDoc(doc(db, "apikey", "googlegenai"));
     const apiKey = snapshot.data().key;
+
     genAI = new GoogleGenerativeAI(apiKey);
     model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    console.log("✅ Gemini model initialized.");
+
+    console.log("✅ Gemini model initialized");
   } catch (err) {
     console.error("❌ Failed to load API key:", err);
     appendMessage("⚠️ AI not available right now.", "bot");
   }
 }
 
-getApiKey(); // Load on page start
+getApiKey(); // Load API key at startup
 
-// Listen for send button click
-document.getElementById("send-btn").addEventListener("click", () => {
-  const input = document.getElementById("chat-input");
-  const text = input.value.trim().toLowerCase();
-  if (!text) return;
-
-  appendMessage(`🧑 You: ${text}`, "user");
-  input.value = "";
-
-  // First try to match rules
-  if (!ruleChatBot(text)) {
-    // If no rule matched, ask AI
-    askChatBot(text);
-  }
-});
-
-// Display message in chat
-function appendMessage(message, sender = "bot") {
-  const chatHistory = document.getElementById("chat-history");
-  const msg = document.createElement("div");
-  msg.className = `history ${sender}`;
-  msg.textContent = message;
-  chatHistory.appendChild(msg);
-  chatHistory.scrollTop = chatHistory.scrollHeight;
-}
-
-// Command logic
+// 🧠 Rule-based chatbot logic
 function ruleChatBot(text) {
   if (text.startsWith("add task")) {
     const task = text.replace("add task", "").trim();
     if (task) {
-      addTask(task); // assumed function in your app
+      window.addTask(task); // function provided by script.js
       appendMessage(`✅ Task "${task}" added.`, "bot");
     } else {
       appendMessage("⚠️ Please specify a task to add.", "bot");
@@ -61,11 +37,16 @@ function ruleChatBot(text) {
   if (text.startsWith("complete")) {
     const task = text.replace("complete", "").trim();
     if (task) {
-      if (removeFromTaskName(task)) {
-        appendMessage(`✅ Task "${task}" completed.`, "bot");
-      } else {
-        appendMessage(`⚠️ Task "${task}" not found.`, "bot");
-      }
+      // Find and remove by name
+      window.findHabitByName(task).then((id) => {
+        if (id) {
+          window.removeTask(id);
+          window.removeVisualTask(id);
+          appendMessage(`✅ Task "${task}" completed.`, "bot");
+        } else {
+          appendMessage(`⚠️ Task "${task}" not found.`, "bot");
+        }
+      });
     } else {
       appendMessage("⚠️ Please specify a task to complete.", "bot");
     }
@@ -75,7 +56,7 @@ function ruleChatBot(text) {
   return false;
 }
 
-// AI fallback for unknown input
+// 🤖 Handle unknown input using Gemini AI
 async function askChatBot(prompt) {
   if (!model) {
     appendMessage("⚠️ AI not ready. Try again shortly.", "bot");
@@ -86,12 +67,15 @@ async function askChatBot(prompt) {
 
   try {
     const result = await model.generateContent(prompt);
-    const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "🤖 I don’t know how to help with that.";
-    
-    // Replace last "Thinking..." message
-    const msgs = document.querySelectorAll(".history.bot");
-    if (msgs.length) msgs[msgs.length - 1].textContent = `🤖 AI: ${reply}`;
-    else appendMessage(`🤖 AI: ${reply}`, "bot");
+    const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "🤖 I’m not sure how to help with that.";
+
+    // Replace "Thinking..." with the real reply
+    const lastBotMsg = document.querySelector(".history.bot:last-of-type");
+    if (lastBotMsg) {
+      lastBotMsg.textContent = `🤖 AI: ${reply}`;
+    } else {
+      appendMessage(`🤖 AI: ${reply}`, "bot");
+    }
 
     console.log("🟢 AI response:", reply);
   } catch (err) {
@@ -100,15 +84,27 @@ async function askChatBot(prompt) {
   }
 }
 
-// Remove task by name (used in ruleChatBot)
-function removeFromTaskName(taskName) {
-  const elements = document.getElementsByName(taskName);
-  if (elements.length === 0) return false;
+// 🖱️ Chat send button listener
+document.getElementById("send-btn").addEventListener("click", () => {
+  const input = document.getElementById("chat-input");
+  const text = input.value.trim().toLowerCase();
+  if (!text) return;
 
-  elements.forEach((el) => {
-    removeTask(el.id); // assumed function
-    removeVisualTask(el.id); // assumed function
-  });
+  appendMessage(`🧑 You: ${text}`, "user");
+  input.value = "";
 
-  return true;
+  // Rule-based first, AI fallback
+  if (!ruleChatBot(text)) {
+    askChatBot(text);
+  }
+});
+
+// 💬 Append message to chat history
+function appendMessage(message, sender = "bot") {
+  const chatHistory = document.getElementById("chat-history");
+  const msg = document.createElement("div");
+  msg.className = `history ${sender}`;
+  msg.textContent = message;
+  chatHistory.appendChild(msg);
+  chatHistory.scrollTop = chatHistory.scrollHeight;
 }
