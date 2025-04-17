@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-console.log("✅ AI chatbot script loaded");
+console.log("✅ AI Chatbot script loaded");
 
-// ✅ Your Google AI Studio API key
+// ✅ Google AI Studio API Key (not from Firebase, not OAuth)
 const apiKey = "AIzaSyDIfIKwkNJKb4Voo26lSNgUr2tOXpAjS5c";
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// ✅ Use the correct model for browser/API key usage
+// ✅ This is the ONLY model you can use in the browser with an API key
 const model = genAI.getGenerativeModel({ model: "models/text-bison-001" });
 
 function appendMessage(message, sender = "system") {
@@ -36,18 +36,19 @@ async function askChatBot(prompt) {
     document.getElementById("chat-history").scrollTop = document.getElementById("chat-history").scrollHeight;
 
     try {
-        console.log("🟡 Sending to text-bison:", prompt);
+        console.log("🟡 Sending request to text-bison:", prompt);
 
         const result = await model.generateContent({
             contents: [{ parts: [{ text: prompt }] }],
         });
 
-        console.log("🟢 API Response:", result);
+        console.log("🟢 AI Response:", result);
 
         thinkingMsg.remove();
 
         const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "🤖 No response.";
         appendMessage(`🤖 AI: ${reply}`, "bot");
+
     } catch (err) {
         console.error("❌ AI Error:", err);
         thinkingMsg.remove();
