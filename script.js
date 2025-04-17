@@ -5,49 +5,73 @@ let editingId = null;
 document.getElementById("add-habit").addEventListener("click", async () => {
     const habitInput = document.getElementById("habit-input");
     const name = habitInput.value.trim();
-    if (!name) return;
-
-    if (editingId) {
-        await updateDoc(doc(db, "habits", editingId), { name });
-        editingId = null;
-        document.getElementById("add-habit").textContent = "Add Habit";
-    } else {
-        await addDoc(collection(db, "habits"), { name });
+    if (!name) {
+        alert("⚠️ Please enter a habit first.");
+        return;
     }
 
-    habitInput.value = "";
-    loadHabits();
+    try {
+        if (editingId) {
+            console.log("🔄 Updating habit:", editingId);
+            await updateDoc(doc(db, "habits", editingId), { name });
+            editingId = null;
+            document.getElementById("add-habit").textContent = "Add Habit";
+        } else {
+            console.log("➕ Adding new habit:", name);
+            await addDoc(collection(db, "habits"), { name });
+        }
+
+        habitInput.value = "";
+        loadHabits();
+    } catch (error) {
+        console.error("❌ Error adding habit:", error);
+        alert("Error saving habit. Check console.");
+    }
 });
 
 async function loadHabits() {
     const habitList = document.getElementById("habit-list");
     habitList.innerHTML = "";
 
-    const snapshot = await getDocs(collection(db, "habits"));
-    snapshot.forEach((docSnap) => {
-        const habit = docSnap.data();
-        const li = document.createElement("li");
-        li.textContent = habit.name;
+    try {
+        const snapshot = await getDocs(collection(db, "habits"));
+        console.log("📦 Loaded habits:", snapshot.size);
 
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.onclick = () => {
-            document.getElementById("habit-input").value = habit.name;
-            editingId = docSnap.id;
-            document.getElementById("add-habit").textContent = "Update Habit";
-        };
+        snapshot.forEach((docSnap) => {
+            const habit = docSnap.data();
+            console.log("📋 Habit:", habit);
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.onclick = async () => {
-            await deleteDoc(doc(db, "habits", docSnap.id));
-            loadHabits();
-        };
+            const li = document.createElement("li");
+            li.textContent = habit.name;
 
-        li.appendChild(editBtn);
-        li.appendChild(deleteBtn);
-        habitList.appendChild(li);
-    });
+            const editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.onclick = () => {
+                document.getElementById("habit-input").value = habit.name;
+                editingId = docSnap.id;
+                document.getElementById("add-habit").textContent = "Update Habit";
+            };
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = async () => {
+                await deleteDoc(doc(db, "habits", docSnap.id));
+                loadHabits();
+            };
+
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
+            habitList.appendChild(li);
+        });
+
+        if (snapshot.empty) {
+            habitList.innerHTML = "<p>No habits found.</p>";
+        }
+
+    } catch (error) {
+        console.error("❌ Error loading habits:", error);
+        alert("Error loading habits. Check console.");
+    }
 }
 
 window.onload = loadHabits;
