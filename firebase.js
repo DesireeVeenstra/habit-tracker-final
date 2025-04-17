@@ -1,17 +1,18 @@
+// ✅ Import Firebase modules from the CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
   collection,
   addDoc,
+  getDoc,
   getDocs,
-  getDoc, // ✅ Add this if it's missing
   deleteDoc,
   doc,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js"; // optional
-
+// ✅ Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCwlA4odG3d5IYlwGrs1ilFHNfWvP7teYU",
   authDomain: "habit-tracker-midterm.firebaseapp.com",
@@ -22,16 +23,18 @@ const firebaseConfig = {
   measurementId: "G-3DBVCE8PEK"
 };
 
+// ✅ Initialize Firebase and Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const analytics = getAnalytics(app); // optional
 
+// ✅ Export Firestore functions for use in other modules
 export {
   db,
   collection,
   addDoc,
+  getDoc,
   getDocs,
-  getDoc, // ✅ Ensure this line is exported
   deleteDoc,
   doc,
   updateDoc
