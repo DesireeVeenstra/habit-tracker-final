@@ -112,7 +112,35 @@ li button:hover {
 }
 
 /*  Chatbot Container */
-#chatbot-container {
+#chat-history {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.history {
+    margin-bottom: 8px;
+}
+
+.history.user {
+    color: #2c3e50;
+}
+
+.history.bot {
+    color: #007bff;
+}
+
+.thinking {
+    font-style: italic;
+    color: gray;
+}
+
+
+
+/* #chatbot-container {
     width: 320px;
     border: 1px solid #ccc;
     padding: 15px;
@@ -161,7 +189,7 @@ li button:hover {
     background-color: #e6e6e6;
     border-radius: 5px;
     margin-bottom: 5px;
-}
+} */
 
 /* Responsive Design */
 @media (max-width: 600px) {
