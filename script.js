@@ -46,7 +46,7 @@ async function loadHabits() {
       const habit = docSnap.data();
       const habitId = docSnap.id;
 
-      // 🔁 fallback defaults
+      // fallback defaults
       const createdAt = habit.createdAt || today;
       const dates = Array.isArray(habit.dates) ? habit.dates : [];
 
@@ -112,7 +112,7 @@ async function loadHabits() {
 }
 
 function calculateStreak(dates) {
-    if (!Array.isArray(dates)) return 0; // ✅ Fix crash if dates is missing/null
+    if (!Array.isArray(dates)) return 0; // Fix crash if dates is missing/null
   
     const sorted = [...dates].sort((a, b) => new Date(b) - new Date(a));
     let streak = 0;
@@ -141,7 +141,7 @@ function calculateCompletionRate(dates, createdAt) {
 
 window.onload = loadHabits;
 
-// ✅ Chart rendering
+// Chart rendering
 let habitChart = null;
 function renderChart(habitData) {
   const ctx = document.getElementById("habit-chart").getContext("2d");
@@ -174,3 +174,11 @@ function renderChart(habitData) {
     }
   });
 }
+// Chatbot toggle handler
+document.getElementById("chat-toggle").addEventListener("click", () => {
+    const chat = document.getElementById("chatbot-container");
+    chat.classList.toggle("open");
+  
+    const isOpen = chat.classList.contains("open");
+    document.getElementById("chat-toggle").textContent = isOpen ? "✖" : "💬";
+  });
