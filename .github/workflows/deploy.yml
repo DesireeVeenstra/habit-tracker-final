@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: 🚀 Deploy & Validate Habit Tracker
 
 on:
   push:
     branches:
-      - main  # or "master" depending on your default branch
+      - main  # Change to 'master' if that’s your default branch
 
 permissions:
   contents: write
@@ -13,24 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Repo
+      - name: 📥 Checkout repository
         uses: actions/checkout@v3
 
-      - name: 🌐 Setup Node.js
+      - name: 🧰 Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: ⚙️ Install Dependencies
-        run: npm install --legacy-peer-deps || echo "No package.json (skip install)"
+      - name: 📦 Install dependencies (if any)
+        run: npm install --legacy-peer-deps || echo "No package.json found"
 
-      - name: 🧹 Run HTML Hint (Optional)
+      - name: 🧹 Run HTML Lint
         uses: Cyb3r-Jak3/htmlhint-action@v1
         with:
           path: "**/*.html"
+
+      - name: 🔍 Run JS Lint (Optional)
+        run: |
+          npx eslint "**/*.js" || echo "⚠️ No ESLint config or errors ignored"
+
+      - name: ✅ Check for index.html
+        run: test -f index.html || (echo "❌ index.html not found" && exit 1)
 
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .  # deploy root folder (adjust if needed)
+          publish_dir: .
