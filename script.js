@@ -108,22 +108,25 @@ async function loadHabits() {
 }
 
 function calculateStreak(dates) {
-  const sorted = [...dates].sort((a, b) => new Date(b) - new Date(a));
-  let streak = 0;
-  let current = new Date();
-
-  for (let dateStr of sorted) {
-    const date = new Date(dateStr);
-    if (date.toDateString() === current.toDateString()) {
-      streak++;
-      current.setDate(current.getDate() - 1);
-    } else {
-      break;
+    if (!Array.isArray(dates)) return 0; // ✅ Fix crash if dates is missing/null
+  
+    const sorted = [...dates].sort((a, b) => new Date(b) - new Date(a));
+    let streak = 0;
+    let current = new Date();
+  
+    for (let dateStr of sorted) {
+      const date = new Date(dateStr);
+      if (date.toDateString() === current.toDateString()) {
+        streak++;
+        current.setDate(current.getDate() - 1);
+      } else {
+        break;
+      }
     }
+  
+    return streak;
   }
-
-  return streak;
-}
+  
 
 function calculateCompletionRate(dates, createdAt) {
   const start = new Date(createdAt);
