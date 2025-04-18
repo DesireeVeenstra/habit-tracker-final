@@ -3,20 +3,34 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main  # or "master" depending on your default branch
 
 permissions:
   contents: write
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: 📥 Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Deploy
+      - name: 🌐 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: ⚙️ Install Dependencies
+        run: npm install --legacy-peer-deps || echo "No package.json (skip install)"
+
+      - name: 🧹 Run HTML Hint (Optional)
+        uses: Cyb3r-Jak3/htmlhint-action@v1
+        with:
+          path: "**/*.html"
+
+      - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: .  # deploy root folder (adjust if needed)
