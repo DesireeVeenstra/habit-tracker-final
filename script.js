@@ -128,7 +128,42 @@ function calculateCompletionRate(dates, createdAt) {
 
 window.onload = loadHabits;
 
-// ✅ Export for chatbot
+let habitChart = null;
+
+function renderChart(habitData) {
+  const ctx = document.getElementById("habit-chart").getContext("2d");
+
+  const labels = habitData.map(h => h.name);
+  const data = habitData.map(h => Array.isArray(h.dates) ? h.dates.length : 0);
+
+  if (habitChart) habitChart.destroy(); // Reset if chart exists
+
+  habitChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Completions",
+        data,
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          precision: 0
+        }
+      }
+    }
+  });
+}
+
+
+// Export for chatbot
 window.addTask = async function (taskName) {
     const today = new Date().toISOString().split("T")[0];
     await addDoc(collection(db, "habits"), {
