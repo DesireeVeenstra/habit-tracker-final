@@ -111,25 +111,33 @@ async function loadHabits() {
   }
 }
 
-function calculateStreak(dates) {
-    if (!Array.isArray(dates)) return 0; // Fix crash if dates is missing/null
-  
-    const sorted = [...dates].sort((a, b) => new Date(b) - new Date(a));
+  function calculateStreak(dates) {
+    if (!Array.isArray(dates) || dates.length === 0) return 0;
+
+    const formattedDates = dates
+      .map(dateStr => new Date(dateStr))
+      .sort((a, b) => b - a)
+      .map(date => {
+        date.setHours(0, 0, 0, 0); // normalize
+        return date.getTime();
+      });
+
     let streak = 0;
     let current = new Date();
-  
-    for (let dateStr of sorted) {
-      const date = new Date(dateStr);
-      if (date.toDateString() === current.toDateString()) {
+    current.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < formattedDates.length; i++) {
+      if (formattedDates[i] === current.getTime()) {
         streak++;
         current.setDate(current.getDate() - 1);
       } else {
         break;
       }
     }
-  
+
     return streak;
   }
+
   
 
 function calculateCompletionRate(dates, createdAt) {
