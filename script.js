@@ -110,25 +110,25 @@ async function loadHabits() {
 function calculateStreak(dates) {
   if (!Array.isArray(dates) || dates.length === 0) return 0;
 
-  const normalized = dates
-    .map(dateStr => {
-      const date = new Date(dateStr);
-      date.setHours(0, 0, 0, 0);
-      return date.getTime();
-    })
-    .sort((a, b) => b - a);
-
+  const completedSet = new Set(dates); // faster lookup
   let streak = 0;
-  let current = new Date();
-  current.setHours(0, 0, 0, 0);
 
-  while (normalized.includes(current.getTime())) {
-    streak++;
-    current.setDate(current.getDate() - 1);
+  let current = new Date();
+  current.setHours(0, 0, 0, 0); // normalize
+
+  while (true) {
+    const dateStr = current.toISOString().split("T")[0];
+    if (completedSet.has(dateStr)) {
+      streak++;
+      current.setDate(current.getDate() - 1);
+    } else {
+      break;
+    }
   }
 
   return streak;
 }
+
 
 function calculateCompletionRate(dates, createdAt) {
   const start = new Date(createdAt);
