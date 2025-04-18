@@ -95,8 +95,12 @@ async function loadHabits() {
       habitList.appendChild(li);
     });
 
-    renderChart(habitData); // ✅ draw chart
-
+    if (typeof Chart !== "undefined") {
+        renderChart(habitData);
+      } else {
+        console.warn("⚠️ Chart.js not loaded — skipping chart rendering.");
+      }
+      
     if (snapshot.empty) {
       habitList.innerHTML = "<p>No habits found.</p>";
     }
