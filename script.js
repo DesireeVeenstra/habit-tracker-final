@@ -1,4 +1,4 @@
-import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from './firebase.js?v=2'; // ✅ Add this
+import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from './firebase.js?v=2';
 
 let editingId = null;
 
@@ -46,7 +46,6 @@ async function loadHabits() {
       const habit = docSnap.data();
       const habitId = docSnap.id;
 
-      // fallback defaults
       const createdAt = habit.createdAt || today;
       const dates = Array.isArray(habit.dates) ? habit.dates : [];
 
@@ -70,13 +69,11 @@ async function loadHabits() {
         if (!dates.includes(today)) {
           const updatedDates = [...dates, today];
           await updateDoc(doc(db, "habits", habitId), { dates: updatedDates });
-      
-          // Re-fetch and re-render after update
+
           const updatedSnapshot = await getDocs(collection(db, "habits"));
-          processHabitSnapshot(updatedSnapshot); 
+          processHabitSnapshot(updatedSnapshot);
         }
       };
-      
 
       const editBtn = document.createElement("button");
       editBtn.textContent = "Edit";
@@ -100,11 +97,9 @@ async function loadHabits() {
     });
 
     if (typeof Chart !== "undefined") {
-        renderChart(habitData);
-      } else {
-        console.warn("⚠️ Chart.js not loaded — skipping chart rendering.");
-      }
-      
+      renderChart(habitData);
+    }
+
     if (snapshot.empty) {
       habitList.innerHTML = "<p>No habits found.</p>";
     }
@@ -115,34 +110,32 @@ async function loadHabits() {
   }
 }
 
-  function calculateStreak(dates) {
-    if (!Array.isArray(dates) || dates.length === 0) return 0;
+function calculateStreak(dates) {
+  if (!Array.isArray(dates) || dates.length === 0) return 0;
 
-    const formattedDates = dates
-      .map(dateStr => new Date(dateStr))
-      .sort((a, b) => b - a)
-      .map(date => {
-        date.setHours(0, 0, 0, 0); // normalize
-        return date.getTime();
-      });
+  const formattedDates = dates
+    .map(dateStr => new Date(dateStr))
+    .sort((a, b) => b - a)
+    .map(date => {
+      date.setHours(0, 0, 0, 0);
+      return date.getTime();
+    });
 
-    let streak = 0;
-    let current = new Date();
-    current.setHours(0, 0, 0, 0);
+  let streak = 0;
+  let current = new Date();
+  current.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < formattedDates.length; i++) {
-      if (formattedDates[i] === current.getTime()) {
-        streak++;
-        current.setDate(current.getDate() - 1);
-      } else {
-        break;
-      }
+  for (let i = 0; i < formattedDates.length; i++) {
+    if (formattedDates[i] === current.getTime()) {
+      streak++;
+      current.setDate(current.getDate() - 1);
+    } else {
+      break;
     }
-
-    return streak;
   }
 
-  
+  return streak;
+}
 
 function calculateCompletionRate(dates, createdAt) {
   const start = new Date(createdAt);
@@ -186,11 +179,12 @@ function renderChart(habitData) {
     }
   });
 }
-// Chatbot toggle handler
+
+// Toggle chatbot UI
 document.getElementById("chat-toggle").addEventListener("click", () => {
-    const chat = document.getElementById("chatbot-container");
-    chat.classList.toggle("open");
-  
-    const isOpen = chat.classList.contains("open");
-    document.getElementById("chat-toggle").textContent = isOpen ? "✖" : "💬";
-  });
+  const chat = document.getElementById("chatbot-container");
+  chat.classList.toggle("open");
+
+  const isOpen = chat.classList.contains("open");
+  document.getElementById("chat-toggle").textContent = isOpen ? "✖" : "💬";
+});
