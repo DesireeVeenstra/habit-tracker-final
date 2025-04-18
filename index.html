@@ -26,9 +26,14 @@
         <!-- Habit Tracker Input -->
         <section id="habit-form">
             <h2>Track Your Habits</h2>
-            <input type="text" id="habit-input" placeholder="Enter a habit" aria-label="Enter a habit">
+        
+            <!-- Hidden but accessible label for screen readers -->
+            <label for="habit-input" class="visually-hidden">Habit Name</label>
+        
+            <input type="text" id="habit-input" placeholder="Enter a habit" />
             <button id="add-habit">Add Habit</button>
         </section>
+  
 
         <!-- Habit List -->
         <section>
@@ -45,7 +50,7 @@
         <!-- QR Code Generator -->
         <section id="qr-container">
             <h2>Share Your Habit Tracker</h2>
-            <div id="qr-code"></div>
+            <div id="qr-code" aria-label="QR code for sharing this app" role="img"></div>
         </section>
 
         <!-- AI Chatbot -->
