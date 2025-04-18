@@ -39,10 +39,9 @@ async function loadHabits() {
   try {
     const snapshot = await getDocs(collection(db, "habits"));
     const today = new Date().toISOString().split("T")[0];
-
     const habitData = [];
 
-    snapshot.forEach((docSnap) => {
+    for (const docSnap of snapshot.docs) {
       const habit = docSnap.data();
       const habitId = docSnap.id;
 
@@ -69,9 +68,7 @@ async function loadHabits() {
         if (!dates.includes(today)) {
           const updatedDates = [...dates, today];
           await updateDoc(doc(db, "habits", habitId), { dates: updatedDates });
-
-          const updatedSnapshot = await getDocs(collection(db, "habits"));
-          processHabitSnapshot(updatedSnapshot);
+          loadHabits(); // ✅ reload to update UI and streak
         }
       };
 
@@ -94,7 +91,7 @@ async function loadHabits() {
       li.appendChild(editBtn);
       li.appendChild(deleteBtn);
       habitList.appendChild(li);
-    });
+    }
 
     if (typeof Chart !== "undefined") {
       renderChart(habitData);
@@ -113,25 +110,21 @@ async function loadHabits() {
 function calculateStreak(dates) {
   if (!Array.isArray(dates) || dates.length === 0) return 0;
 
-  const formattedDates = dates
-    .map(dateStr => new Date(dateStr))
-    .sort((a, b) => b - a)
-    .map(date => {
+  const normalized = dates
+    .map(dateStr => {
+      const date = new Date(dateStr);
       date.setHours(0, 0, 0, 0);
       return date.getTime();
-    });
+    })
+    .sort((a, b) => b - a);
 
   let streak = 0;
   let current = new Date();
   current.setHours(0, 0, 0, 0);
 
-  for (let i = 0; i < formattedDates.length; i++) {
-    if (formattedDates[i] === current.getTime()) {
-      streak++;
-      current.setDate(current.getDate() - 1);
-    } else {
-      break;
-    }
+  while (normalized.includes(current.getTime())) {
+    streak++;
+    current.setDate(current.getDate() - 1);
   }
 
   return streak;
@@ -143,8 +136,6 @@ function calculateCompletionRate(dates, createdAt) {
   const totalDays = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
   return (dates.length / totalDays) * 100;
 }
-
-window.onload = loadHabits;
 
 // Chart rendering
 let habitChart = null;
@@ -188,3 +179,5 @@ document.getElementById("chat-toggle").addEventListener("click", () => {
   const isOpen = chat.classList.contains("open");
   document.getElementById("chat-toggle").textContent = isOpen ? "✖" : "💬";
 });
+
+window.onload = loadHabits;
