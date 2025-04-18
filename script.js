@@ -68,7 +68,7 @@ async function loadHabits() {
         if (!dates.includes(today)) {
           const updatedDates = [...dates, today];
           await updateDoc(doc(db, "habits", habitId), { dates: updatedDates });
-          loadHabits(); // ✅ reload to update UI and streak
+          loadHabits(); 
         }
       };
 
